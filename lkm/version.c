@@ -1,12 +1,14 @@
 #include <linux/fs.h>
 #include <linux/init.h>
+#include <linux/kernel.h>
+#include <linux/utsname.h>
 #include <linux/miscdevice.h>
 #include <linux/module.h>
 #include <linux/printk.h>
-#include <linux/utsname.h>
 
-#define MAX_VERSION_STRING_LENGTH 64
-#define LINUX_PROC_BANNER 
+#include "version.h"
+
+#define MAX_VERSION_STRING_LENGTH 128
 
 static char m_current_version[MAX_VERSION_STRING_LENGTH];
 static size_t m_len = 0;
@@ -15,9 +17,15 @@ static int m_version_device_in_use = 0;
 
 static void version_set_default(void)
 {
+	/* m_len = snprintf(m_current_version, */
+	/* 		 MAX_VERSION_STRING_LENGTH, */
+	/* 		 linux_proc_banner, */
+	/* 		 utsname()->sysname, */
+	/* 		 utsname()->release, */
+	/* 		 utsname()->version); */
 	m_len = snprintf(m_current_version,
 			 MAX_VERSION_STRING_LENGTH,
-			 LINUX_PROC_BANNER,
+			 "%s version %s %s\n",
 			 utsname()->sysname,
 			 utsname()->release,
 			 utsname()->version);
@@ -29,6 +37,7 @@ static void version_update_current(const char *version, const int length)
 					     ? MAX_VERSION_STRING_LENGTH
 					     : length));
 	m_len = length;
+	m_version_modified = 1;
 }
 
 static ssize_t version_read(struct file *file, char __user *buffer, size_t count, loff_t *off)
@@ -53,6 +62,16 @@ static ssize_t version_write(struct file *file, const char __user *buffer, size_
 	return count;
 }
 
+static long version_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+{
+	switch (cmd) {
+	case VERSION_MODIFIED: return m_version_modified; break;
+	case VERSION_RESET: version_set_default(); break;
+	default: return -ENOTTY;
+	}
+	return 0;
+}
+
 static int version_open(struct inode *inode, struct file *file)
 {
 	return (m_version_device_in_use++ ? -EBUSY : 0);
@@ -66,10 +85,11 @@ static int version_release(struct inode *inode, struct file *file)
 
 static struct file_operations file_ops = {
 	.owner		= THIS_MODULE,
-	.open		= &version_open,
-	.read		= &version_read,
-	.write		= &version_write,
-	.release	= &version_release,
+	.open		= version_open,
+	.read		= version_read,
+	.write		= version_write,
+	.unlocked_ioctl	= version_ioctl,
+	.release	= version_release,
 };
 
 static struct miscdevice misc_device = {
