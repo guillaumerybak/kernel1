@@ -5,8 +5,8 @@
 	.long MAGIC
 	.long FLAGS
 	.long -(MAGIC + FLAGS)
-.section .text
-.global _start
+	.section .text
+	.global _start
 
 _start:
 	push %ebx /* multiboot info */

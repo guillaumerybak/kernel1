@@ -5,8 +5,8 @@ LDFLAGS += -nostdlib -m32 -Wl,--build-id=none
 
 all: kernel.bin
 
-kernel.bin: src/printk.o src/crt0.o src/vfb.o src/string.o
-	ld -melf_i386 -T kfs.ld -o kernel.bin src/printk.o src/crt0.o src/vfb.o src/string.o
+kernel.bin: src/printk.o src/crt0.o src/scrn.o
+	ld -melf_i386 -T kfs.ld -o kernel.bin src/printk.o src/crt0.o src/scrn.o
 
 clean:
 	rm -f src/*.o kernel.bin
