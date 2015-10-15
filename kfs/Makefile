@@ -5,14 +5,14 @@ LDFLAGS += -nostdlib -m32 -Wl,--build-id=none
 
 all: kernel.bin
 
-kernel.bin: src/printk.o src/crt0.o src/vfb.o src/string.o
-	ld -melf_i386 -T kfs.ld -o kernel.bin src/printk.o src/crt0.o src/vfb.o src/string.o
+kernel.bin: src/printk.o src/crt0.o src/vfb.o src/string.o src/main.o
+	ld -melf_i386 -T kfs.ld -o kernel.bin src/printk.o src/crt0.o src/vfb.o src/string.o src/main.o
 
 clean:
 	rm -f src/*.o kernel.bin
 
 boot:
-	qemu-system-x86_64 -kernel kernel.bin
+	qemu-system-x86_64 -kernel kernel.bin -serial stdio
 #boot the kernel using Qemu or Bochs.
 
 debug:

@@ -5,7 +5,7 @@
 ** Login   <champi_f@champi-f>
 ** 
 ** Started on  Mon Oct 12 13:17:38 2015 Florian Champin
-** Last update Mon Oct 12 14:58:13 2015 Florian Champin
+** Last update Thu Oct 15 11:37:21 2015 Florian Champin
 */
 
 #ifndef VFB_H_
@@ -26,5 +26,6 @@ typedef struct		s_vfb {
 }			t_vfb;
 
 void vfb_clear();
+void vfb_pustr();
 
 #endif /* !VFB_H_ */
