@@ -5,16 +5,10 @@
 ** Login   <champi_f@champi-f>
 ** 
 ** Started on  Sat Oct 10 14:33:51 2015 Florian Champin
-** Last update Thu Oct 15 13:58:01 2015 Florian Champin
+** Last update Mon Oct 19 10:54:24 2015 Florian Champin
 */
 
 #include "vfb.h"
-
-/* Defines Serial Ports Base Address */
-/* COM1 0x3F8                        */
-/* COM2 0x2F8                */
-/* COM3 0x3E8                */
-/* COM4 0x2E8                */
 
 #define BASE 0x3f8
 #define DLL (base + 0)
@@ -58,6 +52,7 @@ void init_serial()
 
 void	printk(const char *msg) {
   int	i;
+
   init_serial();
   vfb_clear();
 
@@ -65,25 +60,3 @@ void	printk(const char *msg) {
     outportb(PORT, msg[i]);
   vfb_putstr(msg, i);
 }
-
-/*
-int serial_received() {
-  return inportb(PORT + 5) & 1;
-}
-
-char read_serial() {
-  while (serial_received() == 0);
-
-  return inportb(PORT);
-}
-
-int is_transmit_empty() {
-  return inportb(PORT + 5) & 0x20;
-}
-
-void write_serial(char a) {
-  while (is_transmit_empty() == 0);
-
-  outportb(PORT,a);
-}
-*/
