@@ -1,9 +1,9 @@
 From e3a975f5f7dcf4f5fc667e02bd393f6c7e70d56a Mon Sep 17 00:00:00 2001
 From: rybak_g <rybak_g@epitech.eu>
 Date: Thu, 29 Oct 2015 21:33:33 -0700
-Subject: [PATCH 1/1] x64: Add of a new Uptime system call
+Subject: [KERNEL] RYBAK_G CHAMPI_F - SYSCALL
 
-The ESL lab thought the linux kernel was missing a crutial system
+The LSE lab thought the linux kernel was missing a crutial system
 call which returns the current uptime when called or fills the
 structure sent by the user in parameter with the current uptime.
 
