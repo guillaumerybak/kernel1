@@ -1,0 +1,108 @@
+From e3a975f5f7dcf4f5fc667e02bd393f6c7e70d56a Mon Sep 17 00:00:00 2001
+From: rybak_g <rybak_g@epitech.eu>
+Date: Thu, 29 Oct 2015 21:33:33 -0700
+Subject: [PATCH 1/1] x64: Add of a new Uptime system call
+
+The ESL lab thought the linux kernel was missing a crutial system
+call which returns the current uptime when called or fills the
+structure sent by the user in parameter with the current uptime.
+
+Signed-off-by: rybak_g <rybak_g@epitech.eu>
+---
+ Makefile                               |  2 +-
+ arch/x86/entry/syscalls/syscall_32.tbl |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ epitech-kernel/Makefile                |  1 +
+ epitech-kernel/sys_uptime.c            | 19 +++++++++++++++++++
+ include/uapi/asm-generic/unistd.h      |  4 +++-
+ 6 files changed, 26 insertions(+), 2 deletions(-)
+ create mode 100644 epitech-kernel/Makefile
+ create mode 100644 epitech-kernel/sys_uptime.c
+
+diff --git a/Makefile b/Makefile
+index 431067a..07e02eb 100644
+--- a/Makefile
++++ b/Makefile
+@@ -878,7 +878,7 @@ export mod_sign_cmd
+ 
+ 
+ ifeq ($(KBUILD_EXTMOD),)
+-core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/
++core-y		+= kernel/ certs/ mm/ fs/ ipc/ security/ crypto/ block/ epitech-kernel/
+ 
+ vmlinux-dirs	:= $(patsubst %/,%,$(filter %/, $(init-y) $(init-m) \
+ 		     $(core-y) $(core-m) $(drivers-y) $(drivers-m) \
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 7663c45..3dedc1d 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -382,3 +382,4 @@
+ 373	i386	shutdown		sys_shutdown
+ 374	i386	userfaultfd		sys_userfaultfd
+ 375	i386	membarrier		sys_membarrier
++376	i386	uptime			sys_uptime
+\ No newline at end of file
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 278842f..a240fdb 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -331,6 +331,7 @@
+ 322	64	execveat		stub_execveat
+ 323	common	userfaultfd		sys_userfaultfd
+ 324	common	membarrier		sys_membarrier
++325	common	uptime			sys_uptime
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/epitech-kernel/Makefile b/epitech-kernel/Makefile
+new file mode 100644
+index 0000000..ebd3047
+--- /dev/null
++++ b/epitech-kernel/Makefile
+@@ -0,0 +1 @@
++obj-y	:= sys_uptime.o
+diff --git a/epitech-kernel/sys_uptime.c b/epitech-kernel/sys_uptime.c
+new file mode 100644
+index 0000000..54c5738
+--- /dev/null
++++ b/epitech-kernel/sys_uptime.c
+@@ -0,0 +1,19 @@
++#include <linux/kernel.h>
++#include <linux/syscalls.h>
++
++static time_t do_uptime(time_t __user *in)
++{
++	static struct timespec uptime;
++
++	get_monotonic_boottime(&uptime);
++	if (in) {
++		if (copy_to_user(in, &uptime.tv_sec, sizeof(*in)))
++			return ((time_t) -1);
++	}
++	return uptime.tv_sec;
++}
++
++SYSCALL_DEFINE1(uptime, time_t __user *, in)
++{
++	return do_uptime(in);
++}
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index ee12400..8d1d148 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -713,9 +713,11 @@ __SC_COMP(__NR_execveat, sys_execveat, compat_sys_execveat)
+ __SYSCALL(__NR_userfaultfd, sys_userfaultfd)
+ #define __NR_membarrier 283
+ __SYSCALL(__NR_membarrier, sys_membarrier)
++#define __NR_uptime 284
++__SYSCALL(__NR_uptime, sys_uptime)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 284
++#define __NR_syscalls 285
+ 
+ /*
+  * All syscalls below here should go away really,
+-- 
+2.5.0
+

