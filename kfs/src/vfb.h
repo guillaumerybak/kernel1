@@ -11,9 +11,9 @@
 #ifndef VFB_H_
 # define VFB_H_
 
-#define NB_LINE 25
-#define NB_COL	80
-#define VBF_ADD	(void *)0xB8000
+# define NB_LINE 25
+# define NB_COL	80
+# define VBF_ADD	(void *)0xB8000
 
 typedef struct		s_vfb {
   struct
@@ -26,6 +26,6 @@ typedef struct		s_vfb {
 }			t_vfb;
 
 void vfb_clear();
-void vfb_pustr();
+void vfb_putstr(const char *, const int);
 
 #endif /* !VFB_H_ */

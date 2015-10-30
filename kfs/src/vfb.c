@@ -8,6 +8,7 @@
 ** Last update Mon Oct 12 19:39:42 2015 Florian Champin
 */
 
+#include "string.h"
 #include "vfb.h"
 
 static struct s_vfb vfb = {
@@ -42,7 +43,7 @@ static inline void	vfb_putchar(char c) {
     new_line();
 }
 
-void	vfb_putstr(const char *str, int size) {
+void	vfb_putstr(const char *str, const int size) {
   int	ite;
 
   for (ite = 0; ite < size; ++ite)

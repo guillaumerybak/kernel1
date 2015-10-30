@@ -1,5 +1,5 @@
 CFLAGS += -nostdinc -fno-builtin -m32
-CFLAGS += -fno-stack-protector
+CFLAGS += -fno-stack-protector -Wall -Wextra
 ASFLAGS += -m32
 LDFLAGS += -nostdlib -m32 -Wl,--build-id=none
 
@@ -11,7 +11,7 @@ kernel.bin: src/printk.o src/crt0.o src/vfb.o src/string.o src/main.o
 clean:
 	rm -f src/*.o kernel.bin
 
-boot:
+boot: all
 	qemu-system-x86_64 -kernel kernel.bin -serial stdio
 #boot the kernel using Qemu or Bochs.
 
