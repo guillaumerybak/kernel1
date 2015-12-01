@@ -1,1 +1,0 @@
-cmd_/home/gry/kernel1/version-champi_f/version.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/gry/kernel1/version-champi_f/version.ko /home/gry/kernel1/version-champi_f/version.o /home/gry/kernel1/version-champi_f/version.mod.o
