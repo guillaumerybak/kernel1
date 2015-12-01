@@ -1,1 +1,0 @@
-mount disk.img mnt
